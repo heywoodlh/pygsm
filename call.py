@@ -33,15 +33,22 @@ def makeCall(phone, recipient):
     finally:
         phone.close()
 
-def answerCall():
-    print('answer call function')
+def answerCall(phone):
+    try: 
+        phone.write(b'ATA\r')
+        fin = input('Type "end" to hang up\n')
+        while fin not in ['end', '"end"']:
+            fin = input('Type "end" to hang up\n')
+        phone.write(b'ATH\r')
+    finally:
+        phone.close()
 
 def main():
     phone = serial.Serial(args.interface, 115200, timeout=5)
     if sys.argv[1] == 'make':
         makeCall(phone, args.recipient)
     elif sys.argv[1] == 'receive':
-        answerCall()
+        answerCall(phone)
     else:
         parser.print_help()
 
