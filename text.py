@@ -43,13 +43,26 @@ def sendText(phone, recipient, message):
     finally:
         phone.close()
 
+def readMessage(phone):
+    try:
+        time.sleep(0.5)
+        phone.write(b'AT+CMGL="ALL"\r')
+        read = phone.readlines()
+        badChars = ['OK', 'AT']
+        for msg in read:
+            if not any(x in str(msg) for x in badChars): 
+                print(str(msg.decode("utf-8")))
+        time.sleep(0.5)
+    finally:
+        phone.close()
+
 
 def main():
     phone = serial.Serial(args.interface, 115200, timeout=5)
     if sys.argv[1] == 'send':
         sendText(phone, args.recipient, args.message)
     elif sys.argv[1] == 'read':
-        print('read')
+        readMessage(phone)
     else: 
         parser.print_help()
 
